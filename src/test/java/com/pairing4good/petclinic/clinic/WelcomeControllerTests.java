@@ -9,6 +9,6 @@ public class WelcomeControllerTests {
     @Test
     public void shouldWelcomeForBasePath(){
         WelcomeController controller = new WelcomeController();
-        assertEquals("welcome", controller.welcome());
+        assertEquals("welcomez", controller.welcome());
     }
 }
