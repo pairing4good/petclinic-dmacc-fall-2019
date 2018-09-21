@@ -1,4 +1,4 @@
-# Spring PetClinic Sample Application [![Build Status](https://travis-ci.org/????/????.png?branch=master)](https://travis-ci.org/????/????/)
+# Spring PetClinic Sample Application [![Build Status](https://travis-ci.org/pairing4good/petclinic.png?branch=master)](https://travis-ci.org/pairing4good/petclinic/)
 
 ## Running petclinic locally
 ```
