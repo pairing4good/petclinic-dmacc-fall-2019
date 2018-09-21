@@ -20,11 +20,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 public class WelcomeControllerIntegrationTests {
 
     @Autowired
-    private MockMvc mvc;
+    private MockMvc mockMvc;
 
     @Test
     public void shouldSuccessfullyRenderTheWelcomePage() throws Exception {
-        this.mvc.perform(get("/").accept(MediaType.TEXT_PLAIN))
+        this.mockMvc.perform(get("/").accept(MediaType.TEXT_PLAIN))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Welcome")));
     }
