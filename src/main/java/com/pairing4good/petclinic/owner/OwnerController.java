@@ -21,7 +21,7 @@ public class OwnerController {
     }
 
     @GetMapping("/owners/new")
-    public String create(Map<String, Object> model) {
+    public String setupSave(Map<String, Object> model) {
         model.put("owner", new Owner());
         return OWNERS_CREATE_OR_UPDATE_OWNER_FORM;
     }
@@ -34,5 +34,11 @@ public class OwnerController {
             ownerRepository.save(owner);
             return "redirect:/owners/" + owner.getId();
         }
+    }
+
+    @GetMapping("/owners/find")
+    public String setupFind(Map<String, Object> model) {
+        model.put("owner", new Owner());
+        return "owners/findOwners";
     }
 }

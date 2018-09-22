@@ -44,4 +44,12 @@ public class OwnerControllerIntegrationTests {
                 .andExpect(status().is3xxRedirection());
     }
 
+
+    @Test
+    public void shouldSetupOwnerFind() throws Exception {
+        mockMvc.perform(get("/owners/find"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("owner"))
+                .andExpect(view().name("owners/findOwners"));
+    }
 }

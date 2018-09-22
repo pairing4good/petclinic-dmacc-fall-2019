@@ -34,7 +34,7 @@ public class OwnerControllerTests {
 
     @Test
     public void shouldSetupAnEmptyNewOwner() {
-        String actual = controller.create(model);
+        String actual = controller.setupSave(model);
 
         assertTrue(model.containsKey("owner"));
         assertTrue(model.get("owner") instanceof Owner);
@@ -65,5 +65,14 @@ public class OwnerControllerTests {
 
         verify(ownerRepository, never()).save(owner);
         assertEquals("owners/createOrUpdateOwnerForm", actual);
+    }
+
+    @Test
+    public void shouldSetupOwnerFind() {
+        String actual = controller.setupFind(model);
+
+        assertTrue(model.containsKey("owner"));
+        assertTrue(model.get("owner") instanceof Owner);
+        assertEquals("owners/findOwners", actual);
     }
 }
