@@ -1,8 +1,7 @@
 package com.pairing4good.petclinic.owner;
 
-import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.CrudRepository;
 
-public interface OwnerRepository extends Repository<Owner, Integer> {
+public interface OwnerRepository extends CrudRepository<Owner, Integer> {
 
-    void save(Owner owner);
 }
