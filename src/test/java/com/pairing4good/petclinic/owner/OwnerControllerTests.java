@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.validation.BindingResult;
 
@@ -13,9 +12,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OwnerControllerTests {
@@ -30,13 +27,13 @@ public class OwnerControllerTests {
     private Map<String, Object> model;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         controller = new OwnerController(ownerRepository);
         model = new HashMap<>();
     }
 
     @Test
-    public void shouldSetupAnEmptyNewOwner(){
+    public void shouldSetupAnEmptyNewOwner() {
         String actual = controller.create(model);
 
         assertTrue(model.containsKey("owner"));
@@ -45,7 +42,7 @@ public class OwnerControllerTests {
     }
 
     @Test
-    public void shouldSaveValidOwner(){
+    public void shouldSaveValidOwner() {
         Owner owner = new Owner();
         owner.setId(1);
 
@@ -58,7 +55,7 @@ public class OwnerControllerTests {
     }
 
     @Test
-    public void shouldNotSaveInvalidOwner(){
+    public void shouldNotSaveInvalidOwner() {
         Owner owner = new Owner();
         owner.setId(1);
 

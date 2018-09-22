@@ -7,4 +7,4 @@
 	./gradlew bootRun
 ```
 
-You can then access petclinic here: http://localhost:8080/
+You can then access petclinic here: [http://localhost:8080/](http://localhost:8080/)

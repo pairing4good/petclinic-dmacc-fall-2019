@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
@@ -29,6 +30,18 @@ public class OwnerControllerIntegrationTests {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("owner"))
                 .andExpect(view().name("owners/createOrUpdateOwnerForm"));
+    }
+
+    @Test
+    public void shouldSaveValidOwners() throws Exception {
+        mockMvc.perform(post("/owners/new")
+                .param("firstName", "Joe")
+                .param("lastName", "Bloggs")
+                .param("address", "123 Caramel Street")
+                .param("city", "London")
+                .param("telephone", "01316761638")
+        )
+                .andExpect(status().is3xxRedirection());
     }
 
 }

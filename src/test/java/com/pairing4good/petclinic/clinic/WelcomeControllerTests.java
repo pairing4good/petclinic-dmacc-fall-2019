@@ -7,7 +7,7 @@ import static org.junit.Assert.assertEquals;
 public class WelcomeControllerTests {
 
     @Test
-    public void shouldWelcomeForBasePath(){
+    public void shouldWelcomeForBasePath() {
         WelcomeController controller = new WelcomeController();
         assertEquals("welcome", controller.welcome());
     }

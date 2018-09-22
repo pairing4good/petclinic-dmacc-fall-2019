@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.Map;
 
@@ -25,10 +26,11 @@ public class OwnerController {
         return OWNERS_CREATE_OR_UPDATE_OWNER_FORM;
     }
 
+    @PostMapping("/owners/new")
     public String save(Owner owner, BindingResult bindingResult) {
-        if(bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             return OWNERS_CREATE_OR_UPDATE_OWNER_FORM;
-        }else {
+        } else {
             ownerRepository.save(owner);
             return "redirect:/owners/" + owner.getId();
         }
