@@ -50,6 +50,6 @@ public class OwnerControllerIntegrationTests {
         mockMvc.perform(get("/owners/find"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("owner"))
-                .andExpect(view().name("owners/findOwnersz"));
+                .andExpect(view().name("owners/findOwners"));
     }
 }
