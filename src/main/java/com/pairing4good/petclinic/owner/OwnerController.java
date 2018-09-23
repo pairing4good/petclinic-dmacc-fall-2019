@@ -2,6 +2,7 @@ package com.pairing4good.petclinic.owner;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,5 +53,12 @@ public class OwnerController {
         Optional<Owner> optionalOwner = ownerRepository.findById(ownerId);
         mav.addObject(optionalOwner.get());
         return mav;
+    }
+
+    @GetMapping("/owners/{ownerId}/edit")
+    public String setupEdit(@PathVariable("ownerId") int ownerId, Model model) {
+        Optional<Owner> optionalOwner = ownerRepository.findById(ownerId);
+        model.addAttribute(optionalOwner.get());
+        return OWNERS_CREATE_OR_UPDATE_OWNER_FORM;
     }
 }

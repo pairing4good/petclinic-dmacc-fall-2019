@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -24,21 +25,24 @@ public class OwnerControllerTests {
     @Mock
     private OwnerRepository ownerRepository;
 
+    @Mock
+    private Model model;
+
     private OwnerController controller;
-    private Map<String, Object> model;
+    private Map<String, Object> modelMap;
 
     @Before
     public void setUp() {
         controller = new OwnerController(ownerRepository);
-        model = new HashMap<>();
+        modelMap = new HashMap<>();
     }
 
     @Test
     public void shouldSetupAnEmptyNewOwner() {
-        String actual = controller.setupSave(model);
+        String actual = controller.setupSave(modelMap);
 
-        assertTrue(model.containsKey("owner"));
-        assertTrue(model.get("owner") instanceof Owner);
+        assertTrue(modelMap.containsKey("owner"));
+        assertTrue(modelMap.get("owner") instanceof Owner);
         assertEquals("owners/createOrUpdateOwnerForm", actual);
     }
 
@@ -70,10 +74,10 @@ public class OwnerControllerTests {
 
     @Test
     public void shouldSetupOwnerFind() {
-        String actual = controller.setupFind(model);
+        String actual = controller.setupFind(modelMap);
 
-        assertTrue(model.containsKey("owner"));
-        assertTrue(model.get("owner") instanceof Owner);
+        assertTrue(modelMap.containsKey("owner"));
+        assertTrue(modelMap.get("owner") instanceof Owner);
         assertEquals("owners/findOwners", actual);
     }
 
@@ -89,5 +93,17 @@ public class OwnerControllerTests {
 
         assertEquals("owners/ownerDetails", actual.getViewName());
         assertSame(expected, model.get("owner"));
+    }
+
+    @Test
+    public void shouldEditExistingOwnerById() {
+        Owner expected = new Owner();
+        Optional<Owner> optionalExpected = Optional.of(expected);
+        when(ownerRepository.findById(1)).thenReturn(optionalExpected);
+
+        String actual = controller.setupEdit(1, model);
+
+        verify(model).addAttribute(expected);
+        assertEquals("owners/createOrUpdateOwnerForm", actual);
     }
 }
