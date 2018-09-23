@@ -9,9 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -131,5 +129,61 @@ public class OwnerControllerTests {
         verify(ownerRepository, never()).save(owner);
         assertEquals("owners/createOrUpdateOwnerForm", actual);
         assertNull(owner.getId());
+    }
+
+    @Test
+    public void shouldRejectWhenNoOwnersAreFound() {
+        Owner owner = new Owner();
+        owner.setLastName("testLastName");
+
+        when(ownerRepository.findByLastName("testLastName")).thenReturn(new ArrayList());
+
+        String actual = controller.find(owner, bindingResult, modelMap);
+
+        assertEquals("owners/findOwners", actual);
+        verify(bindingResult).rejectValue("lastName", "notFound", "not found");
+    }
+
+    @Test
+    public void shouldRedirectToOwnersWhenOneOwnerFound() {
+        Owner owner = new Owner();
+        owner.setLastName("testLastName");
+
+        List<Owner> foundOwners = new ArrayList();
+        Owner foundOwner = new Owner();
+        foundOwner.setId(1);
+        foundOwners.add(foundOwner);
+
+        when(ownerRepository.findByLastName("testLastName")).thenReturn(foundOwners);
+
+        String actual = controller.find(owner, bindingResult, modelMap);
+
+        assertEquals("redirect:/owners/1", actual);
+    }
+
+    @Test
+    public void shouldRedirectToOwnerListWhenOwnersAreFound() {
+        Owner owner = new Owner();
+        owner.setLastName("testLastName");
+
+        List<Owner> foundOwners = new ArrayList();
+
+        Owner foundOwnerOne = new Owner();
+        foundOwnerOne.setId(1);
+
+        foundOwners.add(foundOwnerOne);
+
+        Owner foundOwnerTwo = new Owner();
+        foundOwnerTwo.setId(2);
+
+        foundOwners.add(foundOwnerTwo);
+
+        when(ownerRepository.findByLastName("testLastName")).thenReturn(foundOwners);
+
+        String actual = controller.find(owner, bindingResult, modelMap);
+
+        assertEquals("owners/ownersList", actual);
+        assertTrue(modelMap.containsKey("selections"));
+        assertSame(foundOwners, modelMap.get("selections"));
     }
 }

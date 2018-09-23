@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
@@ -45,6 +46,21 @@ public class OwnerController {
     public String setupFind(Map<String, Object> model) {
         model.put("owner", new Owner());
         return "owners/findOwners";
+    }
+
+    @GetMapping("/owners")
+    public String find(Owner owner, BindingResult result, Map<String, Object> model) {
+        Collection<Owner> results = ownerRepository.findByLastName(owner.getLastName());
+        if (results.isEmpty()) {
+            result.rejectValue("lastName", "notFound", "not found");
+            return "owners/findOwners";
+        } else if (results.size() == 1) {
+            owner = results.iterator().next();
+            return "redirect:/owners/" + owner.getId();
+        } else {
+            model.put("selections", results);
+            return "owners/ownersList";
+        }
     }
 
     @GetMapping("/owners/{ownerId}")

@@ -3,6 +3,7 @@ package com.pairing4good.petclinic.integration;
 import com.pairing4good.petclinic.owner.Owner;
 import com.pairing4good.petclinic.owner.OwnerController;
 import com.pairing4good.petclinic.owner.OwnerRepository;
+import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +32,7 @@ public class OwnerControllerIntegrationTests {
     private MockMvc mockMvc;
 
     @MockBean
-    private OwnerRepository owners;
+    private OwnerRepository ownerRepository;
 
     private Owner owner;
 
@@ -45,7 +46,7 @@ public class OwnerControllerIntegrationTests {
         owner.setCity("Madison");
         owner.setTelephone("6085551023");
         Optional<Owner> optionalOwner = Optional.of(owner);
-        given(this.owners.findById(TEST_OWNER_ID)).willReturn(optionalOwner);
+        given(ownerRepository.findById(TEST_OWNER_ID)).willReturn(optionalOwner);
     }
 
     @Test
@@ -138,5 +139,27 @@ public class OwnerControllerIntegrationTests {
                 .andExpect(model().attributeHasFieldErrors("owner", "address"))
                 .andExpect(model().attributeHasFieldErrors("owner", "telephone"))
                 .andExpect(view().name("owners/createOrUpdateOwnerForm"));
+    }
+
+
+    @Test
+    public void testProcessFindFormByLastName() throws Exception {
+        given(ownerRepository.findByLastName(owner.getLastName())).willReturn(Lists.newArrayList(owner));
+        mockMvc.perform(get("/owners")
+                .param("lastName", "Franklin")
+        )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/owners/" + TEST_OWNER_ID));
+    }
+
+    @Test
+    public void testProcessFindFormNoOwnersFound() throws Exception {
+        mockMvc.perform(get("/owners")
+                .param("lastName", "Unknown Surname")
+        )
+                .andExpect(status().isOk())
+                .andExpect(model().attributeHasFieldErrors("owner", "lastName"))
+                .andExpect(model().attributeHasFieldErrorCode("owner", "lastName", "notFound"))
+                .andExpect(view().name("owners/findOwners"));
     }
 }
