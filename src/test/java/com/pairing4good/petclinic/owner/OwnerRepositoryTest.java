@@ -20,7 +20,14 @@ public class OwnerRepositoryTest {
 
         assertEquals(0, ownerRepository.count());
 
-        ownerRepository.save(new Owner());
+        Owner entity = new Owner();
+        entity.setFirstName("testFirstName");
+        entity.setLastName("testLastName");
+        entity.setAddress("test address");
+        entity.setCity("testCity");
+        entity.setTelephone("1234567890");
+
+        ownerRepository.save(entity);
 
         assertEquals(1, ownerRepository.count());
 

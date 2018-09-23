@@ -6,12 +6,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -74,5 +75,19 @@ public class OwnerControllerTests {
         assertTrue(model.containsKey("owner"));
         assertTrue(model.get("owner") instanceof Owner);
         assertEquals("owners/findOwners", actual);
+    }
+
+    @Test
+    public void shouldRetrieveExistingOwnerById() {
+        Owner expected = new Owner();
+        Optional<Owner> optionalExpected = Optional.of(expected);
+        when(ownerRepository.findById(1)).thenReturn(optionalExpected);
+
+        ModelAndView actual = controller.findById(1);
+
+        Map<String, Object> model = actual.getModel();
+
+        assertEquals("owners/ownerDetails", actual.getViewName());
+        assertSame(expected, model.get("owner"));
     }
 }

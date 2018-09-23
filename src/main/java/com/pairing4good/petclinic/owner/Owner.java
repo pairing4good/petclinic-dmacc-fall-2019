@@ -2,9 +2,12 @@ package com.pairing4good.petclinic.owner;
 
 import com.pairing4good.petclinic.model.BaseEntity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotEmpty;
+import java.util.Set;
 
 @Entity
 public class Owner extends BaseEntity {
@@ -20,6 +23,9 @@ public class Owner extends BaseEntity {
     @NotEmpty
     @Digits(fraction = 0, integer = 10)
     private String telephone;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
+    private Set<Pet> pets;
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -60,5 +66,9 @@ public class Owner extends BaseEntity {
 
     public String getTelephone() {
         return this.telephone;
+    }
+
+    public Set<Pet> getPets() {
+        return pets;
     }
 }

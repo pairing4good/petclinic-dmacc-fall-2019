@@ -1,4 +1,4 @@
-package com.pairing4good.petclinic.clinic.integration;
+package com.pairing4good.petclinic.integration;
 
 import com.pairing4good.petclinic.clinic.WelcomeController;
 import org.junit.Test;

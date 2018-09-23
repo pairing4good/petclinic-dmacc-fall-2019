@@ -7,9 +7,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import javax.validation.ConstraintViolation;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -122,14 +120,26 @@ public class OwnerValidationTests {
 
         assertThat(constraintViolations.size()).isEqualTo(2);
 
-        Iterator<ConstraintViolation<Owner>> violationIterator = constraintViolations.iterator();
-        ConstraintViolation<Owner> firstViolation = violationIterator.next();
-        assertThat(firstViolation.getPropertyPath().toString()).isEqualTo("telephone");
-        assertThat(firstViolation.getMessage()).isEqualTo("numeric value out of bounds (<10 digits>.<0 digits> expected)");
+        ArrayList<ConstraintViolation<Owner>> violations = new ArrayList<>();
 
-        ConstraintViolation<Owner> secondViolation = violationIterator.next();
+        for (ConstraintViolation<Owner> violation : constraintViolations) {
+            violations.add(violation);
+        }
+
+        Collections.sort(violations, new Comparator<ConstraintViolation<Owner>>() {
+            @Override
+            public int compare(ConstraintViolation<Owner> first, ConstraintViolation<Owner> second) {
+                return first.getMessage().compareTo(second.getMessage());
+            }
+        });
+
+        ConstraintViolation<Owner> firstViolation = violations.get(0);
+        assertThat(firstViolation.getPropertyPath().toString()).isEqualTo("telephone");
+        assertThat(firstViolation.getMessage()).isEqualTo("must not be empty");
+
+        ConstraintViolation<Owner> secondViolation = violations.get(1);
         assertThat(secondViolation.getPropertyPath().toString()).isEqualTo("telephone");
-        assertThat(secondViolation.getMessage()).isEqualTo("must not be empty");
+        assertThat(secondViolation.getMessage()).isEqualTo("numeric value out of bounds (<10 digits>.<0 digits> expected)");
     }
 
     @Test
