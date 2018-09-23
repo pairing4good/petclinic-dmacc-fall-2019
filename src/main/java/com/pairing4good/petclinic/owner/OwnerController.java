@@ -56,9 +56,20 @@ public class OwnerController {
     }
 
     @GetMapping("/owners/{ownerId}/edit")
-    public String setupEdit(@PathVariable("ownerId") int ownerId, Model model) {
+    public String setupUpdate(@PathVariable("ownerId") int ownerId, Model model) {
         Optional<Owner> optionalOwner = ownerRepository.findById(ownerId);
         model.addAttribute(optionalOwner.get());
         return OWNERS_CREATE_OR_UPDATE_OWNER_FORM;
+    }
+
+    @PostMapping("/owners/{ownerId}/edit")
+    public String update(@Valid Owner owner, BindingResult result, @PathVariable("ownerId") int ownerId) {
+        if (result.hasErrors()) {
+            return OWNERS_CREATE_OR_UPDATE_OWNER_FORM;
+        } else {
+            owner.setId(ownerId);
+            ownerRepository.save(owner);
+            return "redirect:/owners/{ownerId}";
+        }
     }
 }

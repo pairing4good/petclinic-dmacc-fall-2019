@@ -101,9 +101,35 @@ public class OwnerControllerTests {
         Optional<Owner> optionalExpected = Optional.of(expected);
         when(ownerRepository.findById(1)).thenReturn(optionalExpected);
 
-        String actual = controller.setupEdit(1, model);
+        String actual = controller.setupUpdate(1, model);
 
         verify(model).addAttribute(expected);
         assertEquals("owners/createOrUpdateOwnerForm", actual);
+    }
+
+    @Test
+    public void shouldUpdateValidOwner() {
+        Owner owner = new Owner();
+
+        when(bindingResult.hasErrors()).thenReturn(false);
+
+        String actual = controller.update(owner, bindingResult, 1);
+
+        verify(ownerRepository).save(owner);
+        assertEquals("redirect:/owners/{ownerId}", actual);
+        assertEquals(new Integer(1), owner.getId());
+    }
+
+    @Test
+    public void shouldNotUpdateInvalidOwner() {
+        Owner owner = new Owner();
+
+        when(bindingResult.hasErrors()).thenReturn(true);
+
+        String actual = controller.update(owner, bindingResult, 1);
+
+        verify(ownerRepository, never()).save(owner);
+        assertEquals("owners/createOrUpdateOwnerForm", actual);
+        assertNull(owner.getId());
     }
 }
