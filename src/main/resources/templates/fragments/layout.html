@@ -1,5 +1,5 @@
 <!doctype html>
-<html th:fragment="layout (template, menu)">
+<html xmlns:th="http://www.w3.org/1999/xhtml" th:fragment="layout (template, menu)">
 
 <head>
 
@@ -59,6 +59,8 @@
 </nav>
 <div class="container-fluid">
     <div class="container xd-container">
+
+        <div th:class="'alert alert-'+${message?.level}" th:text="${message?.message}"></div>
 
         <th:block th:include="${template}"/>
 

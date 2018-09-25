@@ -120,18 +120,13 @@ public class OwnerValidationTests {
 
         assertThat(constraintViolations.size()).isEqualTo(2);
 
-        ArrayList<ConstraintViolation<Owner>> violations = new ArrayList<>();
+        List<ConstraintViolation<Owner>> violations = new ArrayList<>();
 
         for (ConstraintViolation<Owner> violation : constraintViolations) {
             violations.add(violation);
         }
 
-        Collections.sort(violations, new Comparator<ConstraintViolation<Owner>>() {
-            @Override
-            public int compare(ConstraintViolation<Owner> first, ConstraintViolation<Owner> second) {
-                return first.getMessage().compareTo(second.getMessage());
-            }
-        });
+        Collections.sort(violations, Comparator.comparing(ConstraintViolation::getMessage));
 
         ConstraintViolation<Owner> firstViolation = violations.get(0);
         assertThat(firstViolation.getPropertyPath().toString()).isEqualTo("telephone");

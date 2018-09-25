@@ -1,5 +1,6 @@
 package com.pairing4good.petclinic.owner;
 
+import com.pairing4good.petclinic.message.Message;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,10 +8,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.*;
 
+import static com.pairing4good.petclinic.message.Level.danger;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -26,6 +30,12 @@ public class OwnerControllerTests {
     @Mock
     private Model model;
 
+    @Mock
+    private WebDataBinder webDataBinder;
+
+    @Mock
+    private RedirectAttributes redirectAttributes;
+
     private OwnerController controller;
     private Map<String, Object> modelMap;
 
@@ -33,6 +43,14 @@ public class OwnerControllerTests {
     public void setUp() {
         controller = new OwnerController(ownerRepository);
         modelMap = new HashMap<>();
+    }
+
+    @Test
+    public void shouldNotBindId() {
+        controller.setAllowedFields(webDataBinder);
+
+        verify(webDataBinder).setDisallowedFields("id");
+
     }
 
     @Test
@@ -85,7 +103,7 @@ public class OwnerControllerTests {
         Optional<Owner> optionalExpected = Optional.of(expected);
         when(ownerRepository.findById(1)).thenReturn(optionalExpected);
 
-        ModelAndView actual = controller.findById(1);
+        ModelAndView actual = controller.findById(1, redirectAttributes);
 
         Map<String, Object> model = actual.getModel();
 
@@ -94,15 +112,39 @@ public class OwnerControllerTests {
     }
 
     @Test
+    public void shouldSetupCreateWithOutValidOwner() {
+        Message message = new Message(danger, "Please select an existing owner.");
+
+        when(ownerRepository.findById(1)).thenReturn(Optional.empty());
+
+
+        ModelAndView actual = controller.findById(1, redirectAttributes);
+
+        verify(redirectAttributes).addFlashAttribute("message", message);
+        assertEquals("redirect:/owners", actual.getViewName());
+    }
+
+    @Test
     public void shouldEditExistingOwnerById() {
         Owner expected = new Owner();
         Optional<Owner> optionalExpected = Optional.of(expected);
         when(ownerRepository.findById(1)).thenReturn(optionalExpected);
 
-        String actual = controller.setupUpdate(1, model);
+        String actual = controller.setupUpdate(1, model, redirectAttributes);
 
         verify(model).addAttribute(expected);
         assertEquals("owners/createOrUpdateOwnerForm", actual);
+    }
+
+    @Test
+    public void shouldRedirectWhenNonExistingOwnerSelected() {
+        Message message = new Message(danger, "Please select an existing owner.");
+
+        when(ownerRepository.findById(1)).thenReturn(Optional.empty());
+
+        String actual = controller.setupUpdate(1, model, redirectAttributes);
+        verify(redirectAttributes).addFlashAttribute("message", message);
+        assertEquals("redirect:/owners", actual);
     }
 
     @Test

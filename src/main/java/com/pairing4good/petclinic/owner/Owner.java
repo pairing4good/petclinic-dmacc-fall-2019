@@ -1,12 +1,14 @@
 package com.pairing4good.petclinic.owner;
 
 import com.pairing4good.petclinic.model.BaseEntity;
+import com.pairing4good.petclinic.pet.Pet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotEmpty;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -70,5 +72,15 @@ public class Owner extends BaseEntity {
 
     public Set<Pet> getPets() {
         return pets;
+    }
+
+    public void addPet(Pet pet) {
+        if (pet.isNew()) {
+            if (pets == null) {
+                pets = new HashSet<Pet>();
+            }
+            pets.add(pet);
+        }
+        pet.setOwner(this);
     }
 }

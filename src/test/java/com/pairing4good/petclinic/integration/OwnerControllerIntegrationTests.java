@@ -1,5 +1,6 @@
 package com.pairing4good.petclinic.integration;
 
+import com.pairing4good.petclinic.message.Message;
 import com.pairing4good.petclinic.owner.Owner;
 import com.pairing4good.petclinic.owner.OwnerController;
 import com.pairing4good.petclinic.owner.OwnerRepository;
@@ -12,9 +13,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Optional;
 
+import static com.pairing4good.petclinic.message.Level.danger;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
@@ -102,6 +105,16 @@ public class OwnerControllerIntegrationTests {
     }
 
     @Test
+    public void shouldRedirectWhenOwnerIdMissing() throws Exception {
+        Message expectedMessage = new Message(danger, "Please select an existing owner.");
+
+        mockMvc.perform(get("/owners/{ownerId}", 99))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/owners"))
+                .andExpect(MockMvcResultMatchers.flash().attribute("message", expectedMessage));
+    }
+
+    @Test
     public void shouldSetupOwnerEdit() throws Exception {
         mockMvc.perform(get("/owners/{ownerId}/edit", TEST_OWNER_ID))
                 .andExpect(status().isOk())
@@ -111,7 +124,18 @@ public class OwnerControllerIntegrationTests {
                 .andExpect(model().attribute("owner", hasProperty("address", is("110 W. Liberty St."))))
                 .andExpect(model().attribute("owner", hasProperty("city", is("Madison"))))
                 .andExpect(model().attribute("owner", hasProperty("telephone", is("6085551023"))))
+                .andExpect(model().attribute("owner", hasProperty("id", is(TEST_OWNER_ID))))
                 .andExpect(view().name("owners/createOrUpdateOwnerForm"));
+    }
+
+    @Test
+    public void shouldRedirectMissingOwnerId() throws Exception {
+        Message expectedMessage = new Message(danger, "Please select an existing owner.");
+
+        mockMvc.perform(get("/owners/{ownerId}/edit", 99))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/owners"))
+                .andExpect(MockMvcResultMatchers.flash().attribute("message", expectedMessage));
     }
 
     @Test
