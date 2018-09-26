@@ -18,7 +18,7 @@ public class OwnerRepositoryTest {
     @Test
     public void shouldSaveOwner() {
 
-        assertEquals(0, ownerRepository.count());
+        assertEquals(10, ownerRepository.count());
 
         Owner entity = new Owner();
         entity.setFirstName("testFirstName");
@@ -29,7 +29,7 @@ public class OwnerRepositoryTest {
 
         ownerRepository.save(entity);
 
-        assertEquals(1, ownerRepository.count());
+        assertEquals(11, ownerRepository.count());
 
     }
 }

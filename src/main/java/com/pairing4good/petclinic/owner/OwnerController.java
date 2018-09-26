@@ -61,7 +61,11 @@ public class OwnerController {
 
     @GetMapping("/owners")
     public String find(Owner owner, BindingResult result, Map<String, Object> model) {
-        Collection<Owner> results = ownerRepository.findByLastName(owner.getLastName());
+        if (owner.getLastName() == null) {
+            owner.setLastName("");
+        }
+
+        Collection<Owner> results = ownerRepository.findByLastNameContainingIgnoreCase(owner.getLastName());
         if (results.isEmpty()) {
             result.rejectValue("lastName", "notFound", "not found");
             return "owners/findOwners";

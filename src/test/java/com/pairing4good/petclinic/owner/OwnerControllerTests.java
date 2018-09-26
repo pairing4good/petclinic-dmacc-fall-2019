@@ -178,12 +178,22 @@ public class OwnerControllerTests {
         Owner owner = new Owner();
         owner.setLastName("testLastName");
 
-        when(ownerRepository.findByLastName("testLastName")).thenReturn(new ArrayList());
+        when(ownerRepository.findByLastNameContainingIgnoreCase("testLastName")).thenReturn(new ArrayList());
 
         String actual = controller.find(owner, bindingResult, modelMap);
 
         assertEquals("owners/findOwners", actual);
         verify(bindingResult).rejectValue("lastName", "notFound", "not found");
+    }
+
+    @Test
+    public void shouldConvertNullLastNameToEmptyString() {
+        Owner owner = new Owner();
+        owner.setLastName(null);
+
+        String actual = controller.find(owner, bindingResult, modelMap);
+
+        verify(ownerRepository).findByLastNameContainingIgnoreCase("");
     }
 
     @Test
@@ -196,7 +206,7 @@ public class OwnerControllerTests {
         foundOwner.setId(1);
         foundOwners.add(foundOwner);
 
-        when(ownerRepository.findByLastName("testLastName")).thenReturn(foundOwners);
+        when(ownerRepository.findByLastNameContainingIgnoreCase("testLastName")).thenReturn(foundOwners);
 
         String actual = controller.find(owner, bindingResult, modelMap);
 
@@ -220,7 +230,7 @@ public class OwnerControllerTests {
 
         foundOwners.add(foundOwnerTwo);
 
-        when(ownerRepository.findByLastName("testLastName")).thenReturn(foundOwners);
+        when(ownerRepository.findByLastNameContainingIgnoreCase("testLastName")).thenReturn(foundOwners);
 
         String actual = controller.find(owner, bindingResult, modelMap);
 

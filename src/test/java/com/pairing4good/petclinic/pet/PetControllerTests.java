@@ -30,6 +30,8 @@ public class PetControllerTests {
 
     @Mock
     private PetRepository petRepository;
+    @Mock
+    private PetTypeRepository petTypeRepository;
 
     @Mock
     private ModelMap model;
@@ -42,7 +44,7 @@ public class PetControllerTests {
 
     @Before
     public void setUp() {
-        controller = new PetController(petRepository, ownerRepository);
+        controller = new PetController(petRepository, petTypeRepository, ownerRepository);
         modelMap = new HashMap<>();
     }
 

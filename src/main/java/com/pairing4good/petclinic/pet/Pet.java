@@ -2,11 +2,12 @@ package com.pairing4good.petclinic.pet;
 
 import com.pairing4good.petclinic.model.BaseEntity;
 import com.pairing4good.petclinic.owner.Owner;
+import com.pairing4good.petclinic.visit.Visit;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 public class Pet extends BaseEntity {
@@ -19,7 +20,12 @@ public class Pet extends BaseEntity {
 
     private LocalDate birthDate;
 
+    @ManyToOne
+    @JoinColumn(name = "type_id")
     private PetType type;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "petId", fetch = FetchType.EAGER)
+    private Set<Visit> visits = new LinkedHashSet<>();
 
     public Owner getOwner() {
         return owner;
@@ -51,5 +57,13 @@ public class Pet extends BaseEntity {
 
     public void setType(PetType type) {
         this.type = type;
+    }
+
+    public Set<Visit> getVisits() {
+        return visits;
+    }
+
+    public void setVisits(Set<Visit> visits) {
+        this.visits = visits;
     }
 }

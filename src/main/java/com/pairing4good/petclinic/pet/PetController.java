@@ -6,6 +6,7 @@ import com.pairing4good.petclinic.owner.OwnerRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -21,11 +22,25 @@ public class PetController {
 
     private static final String VIEWS_PETS_CREATE_OR_UPDATE_FORM = "pets/createOrUpdatePetForm";
     private PetRepository petRepository;
+    private PetTypeRepository petTypeRepository;
     private OwnerRepository ownerRepository;
 
-    public PetController(PetRepository petRepository, OwnerRepository ownerRepository) {
+    public PetController(PetRepository petRepository, PetTypeRepository petTypeRepository,
+                         OwnerRepository ownerRepository) {
         this.petRepository = petRepository;
+        this.petTypeRepository = petTypeRepository;
         this.ownerRepository = ownerRepository;
+    }
+
+    @ModelAttribute("types")
+    public Iterable<PetType> populatePetTypes() {
+
+        return petTypeRepository.findAll();
+    }
+
+    @ModelAttribute("owner")
+    public Owner findOwner(@PathVariable("ownerId") int ownerId) {
+        return ownerRepository.findById(ownerId).get();
     }
 
     @GetMapping("/pets/new")

@@ -3,10 +3,8 @@ package com.pairing4good.petclinic.integration;
 import com.pairing4good.petclinic.message.Message;
 import com.pairing4good.petclinic.owner.Owner;
 import com.pairing4good.petclinic.owner.OwnerRepository;
-import com.pairing4good.petclinic.pet.Pet;
-import com.pairing4good.petclinic.pet.PetController;
-import com.pairing4good.petclinic.pet.PetRepository;
-import com.pairing4good.petclinic.pet.PetType;
+import com.pairing4good.petclinic.pet.*;
+import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,16 +38,27 @@ public class PetControllerIntegrationTests {
     @MockBean
     private PetRepository petRepository;
 
+    @MockBean
+    private PetTypeRepository petTypeRepository;
+
 
     @Before
     public void setup() {
         PetType cat = new PetType();
         cat.setId(3);
-        cat.setName("hamster");
+        cat.setName("cat");
 
+        given(petTypeRepository.findAll()).willReturn(Lists.newArrayList(cat));
         given(ownerRepository.findById(TEST_OWNER_ID)).willReturn(Optional.of(new Owner()));
         given(petRepository.findById(TEST_PET_ID)).willReturn(Optional.of(new Pet()));
+    }
 
+    @Test
+    public void shouldHaveDefaultModelAttributes() throws Exception {
+        mockMvc.perform(get("/owners/{ownerId}/pets/new", TEST_OWNER_ID))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("types"))
+                .andExpect(model().attributeExists("owner"));
     }
 
     @Test

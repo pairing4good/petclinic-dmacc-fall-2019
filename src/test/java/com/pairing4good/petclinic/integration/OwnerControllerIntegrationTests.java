@@ -168,7 +168,7 @@ public class OwnerControllerIntegrationTests {
 
     @Test
     public void testProcessFindFormByLastName() throws Exception {
-        given(ownerRepository.findByLastName(owner.getLastName())).willReturn(Lists.newArrayList(owner));
+        given(ownerRepository.findByLastNameContainingIgnoreCase(owner.getLastName())).willReturn(Lists.newArrayList(owner));
         mockMvc.perform(get("/owners")
                 .param("lastName", "Franklin")
         )
