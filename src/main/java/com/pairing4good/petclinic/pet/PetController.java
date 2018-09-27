@@ -5,13 +5,12 @@ import com.pairing4good.petclinic.owner.Owner;
 import com.pairing4good.petclinic.owner.OwnerRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Map;
+import javax.validation.Valid;
 import java.util.Optional;
 
 import static com.pairing4good.petclinic.message.Level.danger;
@@ -43,12 +42,30 @@ public class PetController {
         return ownerRepository.findById(ownerId).get();
     }
 
+    @InitBinder("owner")
+    public void initOwnerBinder(WebDataBinder dataBinder) {
+        dataBinder.setDisallowedFields("id");
+    }
+
+
     @GetMapping("/pets/new")
-    public String setupSave(Owner owner, Map<String, Object> model) {
+    public String setupSave(Owner owner, ModelMap model) {
         Pet pet = new Pet();
         owner.addPet(pet);
         model.put("pet", pet);
         return VIEWS_PETS_CREATE_OR_UPDATE_FORM;
+    }
+
+    @PostMapping("/pets/new")
+    public String save(Owner owner, @Valid Pet pet, BindingResult result, ModelMap model) {
+        owner.addPet(pet);
+        if (result.hasErrors()) {
+            model.put("pet", pet);
+            return VIEWS_PETS_CREATE_OR_UPDATE_FORM;
+        } else {
+            petRepository.save(pet);
+            return "redirect:/owners/{ownerId}";
+        }
     }
 
     @GetMapping("/pets/{petId}/edit")
@@ -62,6 +79,19 @@ public class PetController {
             Message message = new Message(danger, "Please select an existing pet.");
             redirectAttributes.addFlashAttribute("message", message);
             return "redirect:/owners/" + ownerId;
+        }
+    }
+
+    @PostMapping("/pets/{petId}/edit")
+    public String update(@Valid Pet pet, BindingResult result, Owner owner, ModelMap model) {
+        if (result.hasErrors()) {
+            pet.setOwner(owner);
+            model.put("pet", pet);
+            return VIEWS_PETS_CREATE_OR_UPDATE_FORM;
+        } else {
+            owner.addPet(pet);
+            petRepository.save(pet);
+            return "redirect:/owners/{ownerId}";
         }
     }
 }

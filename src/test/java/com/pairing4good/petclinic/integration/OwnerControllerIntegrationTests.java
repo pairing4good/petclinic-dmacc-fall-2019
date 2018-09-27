@@ -73,7 +73,7 @@ public class OwnerControllerIntegrationTests {
     }
 
     @Test
-    public void shouldSaveInalidOwners() throws Exception {
+    public void shouldNotSaveInalidOwners() throws Exception {
         mockMvc.perform(post("/owners/new")
                 .param("firstName", "")
                 .param("lastName", "Bloggs")
@@ -161,7 +161,9 @@ public class OwnerControllerIntegrationTests {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeHasErrors("owner"))
                 .andExpect(model().attributeHasFieldErrors("owner", "address"))
+                .andExpect(model().attributeHasFieldErrorCode("owner", "address", "NotEmpty"))
                 .andExpect(model().attributeHasFieldErrors("owner", "telephone"))
+                .andExpect(model().attributeHasFieldErrorCode("owner", "telephone", "NotEmpty"))
                 .andExpect(view().name("owners/createOrUpdateOwnerForm"));
     }
 

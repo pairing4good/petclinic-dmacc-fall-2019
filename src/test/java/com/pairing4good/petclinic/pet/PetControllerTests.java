@@ -9,18 +9,15 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import static com.pairing4good.petclinic.message.Level.danger;
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PetControllerTests {
@@ -34,18 +31,19 @@ public class PetControllerTests {
     private PetTypeRepository petTypeRepository;
 
     @Mock
-    private ModelMap model;
+    private ModelMap modelMap;
+
+    @Mock
+    private BindingResult bindingResult;
 
     @Mock
     private RedirectAttributes redirectAttributes;
 
     private PetController controller;
-    private Map<String, Object> modelMap;
 
     @Before
     public void setUp() {
         controller = new PetController(petRepository, petTypeRepository, ownerRepository);
-        modelMap = new HashMap<>();
     }
 
     @Test
@@ -55,9 +53,45 @@ public class PetControllerTests {
         String actual = controller.setupSave(owner, modelMap);
 
         assertEquals("pets/createOrUpdatePetForm", actual);
-        assertTrue(modelMap.containsKey("pet"));
-        assertNotNull(modelMap.get("pet"));
+        verify(modelMap).put(eq("pet"), isA(Pet.class));
         assertNotNull(owner.getPets());
+    }
+
+    @Test
+    public void shouldSaveValidPet() {
+        Owner owner = new Owner();
+
+        Pet pet = new Pet();
+
+        when(bindingResult.hasErrors()).thenReturn(false);
+
+        String actual = controller.save(owner, pet, bindingResult, modelMap);
+
+        assertNotNull(owner.getPets());
+        assertTrue(owner.getPets().iterator().hasNext());
+        assertSame(pet, owner.getPets().iterator().next());
+
+        verify(petRepository).save(pet);
+        assertEquals("redirect:/owners/{ownerId}", actual);
+    }
+
+    @Test
+    public void shouldNotSaveInvalidPet() {
+        Owner owner = new Owner();
+
+        Pet pet = new Pet();
+
+        when(bindingResult.hasErrors()).thenReturn(true);
+
+        String actual = controller.save(owner, pet, bindingResult, modelMap);
+
+        assertNotNull(owner.getPets());
+        assertTrue(owner.getPets().iterator().hasNext());
+        assertSame(pet, owner.getPets().iterator().next());
+
+        verify(modelMap).put("pet", pet);
+        verify(petRepository, never()).save(pet);
+        assertEquals("pets/createOrUpdatePetForm", actual);
     }
 
     @Test
@@ -66,9 +100,9 @@ public class PetControllerTests {
 
         when(petRepository.findById(1)).thenReturn(Optional.of(pet));
 
-        String actual = controller.setupUpdate(1, 2, model, redirectAttributes);
+        String actual = controller.setupUpdate(1, 2, modelMap, redirectAttributes);
 
-        verify(model).put("pet", pet);
+        verify(modelMap).put("pet", pet);
         assertEquals("pets/createOrUpdatePetForm", actual);
     }
 
@@ -78,9 +112,42 @@ public class PetControllerTests {
 
         when(petRepository.findById(1)).thenReturn(Optional.empty());
 
-        String actual = controller.setupUpdate(1, 2, model, redirectAttributes);
+        String actual = controller.setupUpdate(1, 2, modelMap, redirectAttributes);
 
         verify(redirectAttributes).addFlashAttribute("message", message);
         assertEquals("redirect:/owners/2", actual);
+    }
+
+    @Test
+    public void shouldUpdateValidPet() {
+        Owner owner = new Owner();
+        Pet pet = new Pet();
+
+        when(bindingResult.hasErrors()).thenReturn(false);
+
+        String actual = controller.update(pet, bindingResult, owner, modelMap);
+
+        assertNotNull(owner.getPets());
+        assertSame(pet, owner.getPets().iterator().next());
+        verify(petRepository).save(pet);
+
+        assertEquals("redirect:/owners/{ownerId}", actual);
+    }
+
+    @Test
+    public void shouldNotUpdateInvalidPet() {
+        Owner owner = new Owner();
+        Pet pet = new Pet();
+
+        when(bindingResult.hasErrors()).thenReturn(true);
+
+        String actual = controller.update(pet, bindingResult, owner, modelMap);
+
+        assertNotNull(pet.getOwner());
+        assertSame(owner, pet.getOwner());
+        verify(modelMap).put("pet", pet);
+        verify(petRepository, never()).save(pet);
+
+        assertEquals("pets/createOrUpdatePetForm", actual);
     }
 }

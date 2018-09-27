@@ -3,8 +3,11 @@ package com.pairing4good.petclinic.pet;
 import com.pairing4good.petclinic.model.BaseEntity;
 import com.pairing4good.petclinic.owner.Owner;
 import com.pairing4good.petclinic.visit.Visit;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -16,10 +19,14 @@ public class Pet extends BaseEntity {
     @JoinColumn(name = "owner_id")
     private Owner owner;
 
+    @NotEmpty
     private String name;
 
+    @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "type_id")
     private PetType type;

@@ -77,7 +77,7 @@ public class Owner extends BaseEntity {
     public void addPet(Pet pet) {
         if (pet.isNew()) {
             if (pets == null) {
-                pets = new HashSet<Pet>();
+                pets = new HashSet<>();
             }
             pets.add(pet);
         }
