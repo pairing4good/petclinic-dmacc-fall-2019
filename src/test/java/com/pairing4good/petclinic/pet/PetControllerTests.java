@@ -27,6 +27,7 @@ public class PetControllerTests {
 
     @Mock
     private PetRepository petRepository;
+
     @Mock
     private PetTypeRepository petTypeRepository;
 

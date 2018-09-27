@@ -9,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -72,5 +73,12 @@ public class Pet extends BaseEntity {
 
     public void setVisits(Set<Visit> visits) {
         this.visits = visits;
+    }
+
+    public void addVisit(Visit visit) {
+        if (visits == null) {
+            visits = new HashSet<>();
+        }
+        visits.add(visit);
     }
 }
