@@ -65,6 +65,6 @@ public class VisitControllerTest {
         String actual = controller.setupNew(1, 2, visit, modelMap, redirectAttributes);
 
         verify(redirectAttributes).addFlashAttribute("message", message);
-        assertEquals("owners/2", actual);
+        assertEquals("redirect:/owners/2", actual);
     }
 }
