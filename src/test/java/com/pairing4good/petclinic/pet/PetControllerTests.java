@@ -10,8 +10,10 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static com.pairing4good.petclinic.message.Level.danger;
@@ -38,6 +40,9 @@ public class PetControllerTests {
     private BindingResult bindingResult;
 
     @Mock
+    private WebDataBinder webDataBinder;
+
+    @Mock
     private RedirectAttributes redirectAttributes;
 
     private PetController controller;
@@ -45,6 +50,34 @@ public class PetControllerTests {
     @Before
     public void setUp() {
         controller = new PetController(petRepository, petTypeRepository, ownerRepository);
+    }
+
+    @Test
+    public void shouldPopulatePetTypes() {
+        ArrayList<PetType> expected = new ArrayList<>();
+
+        when(petTypeRepository.findAll()).thenReturn(expected);
+
+        Iterable<PetType> actual = controller.populatePetTypes();
+
+        assertSame(expected, actual);
+    }
+
+    @Test
+    public void shouldFindOwner() {
+        Owner expected = new Owner();
+        when(ownerRepository.findById(1)).thenReturn(Optional.of(expected));
+
+        Owner actual = controller.findOwner(1);
+
+        assertSame(expected, actual);
+    }
+
+    @Test
+    public void shouldSetAllowedFields() {
+        controller.initOwnerBinder(webDataBinder);
+
+        verify(webDataBinder).setDisallowedFields("id");
     }
 
     @Test

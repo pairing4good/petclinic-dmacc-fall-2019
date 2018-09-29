@@ -1,6 +1,5 @@
 package com.pairing4good.petclinic.visit;
 
-import com.pairing4good.petclinic.message.Message;
 import com.pairing4good.petclinic.pet.Pet;
 import com.pairing4good.petclinic.pet.PetRepository;
 import org.junit.Before;
@@ -8,32 +7,31 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 
+import java.util.HashMap;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static com.pairing4good.petclinic.message.Level.danger;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-
 public class VisitControllerTest {
-
 
     @Mock
     private PetRepository petRepository;
 
     @Mock
+    private WebDataBinder webDataBinder;
+
+    @Mock
     private VisitRepository visitRepository;
 
     @Mock
-    private RedirectAttributes redirectAttributes;
-
-    @Mock
-    private ModelMap modelMap;
+    private BindingResult bindingResult;
 
     private VisitController controller;
 
@@ -43,28 +41,69 @@ public class VisitControllerTest {
     }
 
     @Test
-    public void shouldSetupNewVist() {
-        Visit visit = new Visit();
+    public void shouldLoadPetWithVisit() {
         Pet pet = new Pet();
-
         when(petRepository.findById(1)).thenReturn(Optional.of(pet));
 
-        String actual = controller.setupNew(1, 2, visit, modelMap, redirectAttributes);
+        HashMap<String, Object> model = new HashMap<>();
+
+        Visit visit = controller.loadPetWithVisit(1, model);
+
+        assertSame(pet, model.get("pet"));
+        assertEquals(visit, pet.getVisits().iterator().next());
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void shouldNotLoadPetWithVisitWhenPetMissing() {
+        when(petRepository.findById(1)).thenReturn(Optional.empty());
+
+        controller.loadPetWithVisit(1, new HashMap<>());
+    }
+
+    @Test
+    public void shouldSetAllowedFields() {
+        controller.setAllowedFields(webDataBinder);
+
+        verify(webDataBinder).setDisallowedFields("id");
+    }
+
+    @Test
+    public void shouldSetupNewVist() {
+        String actual = controller.setupSave(1, new HashMap<>());
 
         assertEquals("visits/createOrUpdateVisitForm", actual);
     }
 
     @Test
     public void shouldReturnToPetVewWhenPetDoesNotExist() {
-        Message message = new Message(danger, "Please select an existing pet.");
+        String actual = controller.setupSave(1, new HashMap<>());
 
+        assertEquals("visits/createOrUpdateVisitForm", actual);
+    }
+
+    @Test
+    public void shouldSaveValidVisit() {
         Visit visit = new Visit();
 
-        when(petRepository.findById(1)).thenReturn(Optional.empty());
+        when(bindingResult.hasErrors()).thenReturn(false);
 
-        String actual = controller.setupNew(1, 2, visit, modelMap, redirectAttributes);
+        String actual = controller.save(visit, bindingResult);
 
-        verify(redirectAttributes).addFlashAttribute("message", message);
-        assertEquals("redirect:/owners/2", actual);
+        verify(visitRepository).save(visit);
+
+        assertEquals("redirect:/owners/{ownerId}", actual);
+    }
+
+    @Test
+    public void shouldNotSaveInvalidVisit() {
+        Visit visit = new Visit();
+
+        when(bindingResult.hasErrors()).thenReturn(true);
+
+        String actual = controller.save(visit, bindingResult);
+
+        verify(visitRepository, never()).save(visit);
+
+        assertEquals("visits/createOrUpdateVisitForm", actual);
     }
 }
