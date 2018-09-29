@@ -1,5 +1,6 @@
-package com.pairing4good.petclinic.integration;
+package integration.controller;
 
+import com.pairing4good.petclinic.PetclinicApplication;
 import com.pairing4good.petclinic.message.Message;
 import com.pairing4good.petclinic.owner.Owner;
 import com.pairing4good.petclinic.owner.OwnerRepository;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -30,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         includeFilters = @ComponentScan.Filter(
                 value = PetTypeFormatter.class,
                 type = FilterType.ASSIGNABLE_TYPE))
+@ContextConfiguration(classes = PetclinicApplication.class)
 public class PetControllerIntegrationTests {
 
     private static final int TEST_OWNER_ID = 1;

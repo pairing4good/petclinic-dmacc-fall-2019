@@ -1,11 +1,13 @@
-package com.pairing4good.petclinic.integration;
+package integration.controller;
 
+import com.pairing4good.petclinic.PetclinicApplication;
 import com.pairing4good.petclinic.clinic.WelcomeController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -17,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(WelcomeController.class)
+@ContextConfiguration(classes = PetclinicApplication.class)
 public class WelcomeControllerIntegrationTests {
 
     @Autowired
