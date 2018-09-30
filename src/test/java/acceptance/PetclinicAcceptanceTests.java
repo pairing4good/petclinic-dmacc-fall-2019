@@ -133,7 +133,7 @@ public class PetclinicAcceptanceTests {
         assertEquals("1/pets/1/edit", hrefForId(page, "edit-pet-link"));
 
         assertEquals("Add Visit", textForId(page, "add-visit-link"));
-        assertEquals("1/pets/1/visits/newz", hrefForId(page, "add-visit-link"));
+        assertEquals("1/pets/1/visits/new", hrefForId(page, "add-visit-link"));
     }
 
     private void assertRow(HtmlPage page, int ownerId, String ownerName, String ownerAddress, String ownerCity,
