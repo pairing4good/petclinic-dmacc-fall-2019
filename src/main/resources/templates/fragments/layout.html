@@ -60,7 +60,8 @@
 <div class="container-fluid">
     <div class="container xd-container">
 
-        <div th:class="'alert alert-'+${message?.level}" th:text="${message?.message}"></div>
+        <div id="flash-message" th:class="'alert alert-'+${message?.level}" th:text="${message?.message}"
+             th:if="${message != null}"></div>
 
         <th:block th:include="${template}"/>
 

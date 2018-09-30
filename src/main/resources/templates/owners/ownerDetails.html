@@ -6,55 +6,55 @@
 <body>
 
 
-<h2>Owner Information</h2>
+<h2 id="page-title">Owner Information</h2>
 
 
 <table class="table table-striped" th:object="${owner}">
     <tr>
-        <th>Name</th>
-        <td><b th:text="*{firstName + ' ' + lastName}"></b></td>
+        <th id="name-label">Name</th>
+        <td id="name-value"><b th:text="*{firstName + ' ' + lastName}"></b></td>
     </tr>
     <tr>
-        <th>Address</th>
-        <td th:text="*{address}"/>
+        <th id="address-label">Address</th>
+        <td id="address-value" th:text="*{address}"/>
         </td>
     </tr>
     <tr>
-        <th>City</th>
-        <td th:text="*{city}"/>
+        <th id="city-label">City</th>
+        <td id="city-value" th:text="*{city}"/>
         </td>
     </tr>
     <tr>
-        <th>Telephone</th>
-        <td th:text="*{telephone}"/>
+        <th id="telephone-label">Telephone</th>
+        <td id="telephone-value" th:text="*{telephone}"/>
         </td>
     </tr>
 </table>
 
-<a th:href="@{{id}/edit(id=${owner.id})}" class="btn btn-default">Edit
+<a id="edit-owner-link" th:href="@{{id}/edit(id=${owner.id})}" class="btn btn-default">Edit
     Owner</a>
-<a th:href="@{{id}/pets/new(id=${owner.id})}" class="btn btn-default">Add
+<a id="add-new-pet-link" th:href="@{{id}/pets/new(id=${owner.id})}" class="btn btn-default">Add
     New Pet</a>
 
 <br/>
 <br/>
 <br/>
-<h2>Pets and Visits</h2>
+<h2 id="page-sub-title">Pets and Visits</h2>
 
 <table class="table table-striped">
 
     <tr th:each="pet : ${owner.pets}">
         <td valign="top">
             <dl class="dl-horizontal">
-                <dt>Name</dt>
-                <dd th:text="${pet.name}"/>
+                <dt th:id="'pet-name-label-'+${pet.id}">Name</dt>
+                <dd th:id="'pet-name-value-'+${pet.id}" th:text="${pet.name}"/>
                 </dd>
-                <dt>Birth Date</dt>
-                <dd
+                <dt th:id="'pet-birth-date-label-'+${pet.id}">Birth Date</dt>
+                <dd th:id="'pet-birth-date-value-'+${pet.id}"
                         th:text="${#temporals.format(pet.birthDate, 'yyyy-MM-dd')}"/>
                 </dd>
-                <dt>Type</dt>
-                <dd th:text="${pet.type}"/>
+                <dt th:id="'pet-type-label-'+${pet.id}">Type</dt>
+                <dd th:id="'pet-type-value-'+${pet.id}" th:text="${pet.type}"/>
                 </dd>
             </dl>
         </td>
@@ -62,20 +62,21 @@
             <table class="table-condensed">
                 <thead>
                 <tr>
-                    <th>Visit Date</th>
-                    <th>Description</th>
+                    <th id="visit-date-label">Visit Date</th>
+                    <th id="visit-description-label">Description</th>
                 </tr>
                 </thead>
                 <tr th:each="visit : ${pet.visits}">
-                    <td th:text="${#temporals.format(visit.date, 'yyyy-MM-dd')}"></td>
-                    <td th:text="${visit?.description}"></td>
+                    <td th:id="'visit-date-value-'+${visit.id}"
+                        th:text="${#temporals.format(visit.date, 'yyyy-MM-dd')}"></td>
+                    <td th:id="'visit-description-value-'+${visit.id}" th:text="${visit?.description}"></td>
                 </tr>
                 <tr>
-                    <td><a
-                            th:href="@{{ownerId}/pets/{petId}/edit(ownerId=${owner.id},petId=${pet.id})}">Edit
+                    <td><a th:id="edit-pet-link"
+                           th:href="@{{ownerId}/pets/{petId}/edit(ownerId=${owner.id},petId=${pet.id})}">Edit
                         Pet</a></td>
-                    <td><a
-                            th:href="@{{ownerId}/pets/{petId}/visits/new(ownerId=${owner.id},petId=${pet.id})}">Add
+                    <td><a th:id="add-visit-link"
+                           th:href="@{{ownerId}/pets/{petId}/visits/new(ownerId=${owner.id},petId=${pet.id})}">Add
                         Visit</a></td>
                 </tr>
             </table>

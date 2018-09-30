@@ -8,8 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotEmpty;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Owner extends BaseEntity {
@@ -27,7 +27,7 @@ public class Owner extends BaseEntity {
     private String telephone;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
-    private Set<Pet> pets;
+    private List<Pet> pets;
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -70,14 +70,14 @@ public class Owner extends BaseEntity {
         return this.telephone;
     }
 
-    public Set<Pet> getPets() {
+    public List<Pet> getPets() {
         return pets;
     }
 
     public void addPet(Pet pet) {
         if (pet.isNew()) {
             if (pets == null) {
-                pets = new HashSet<>();
+                pets = new ArrayList<>();
             }
             pets.add(pet);
         }
