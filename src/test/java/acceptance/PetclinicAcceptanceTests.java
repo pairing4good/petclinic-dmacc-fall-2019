@@ -28,9 +28,9 @@ public class PetclinicAcceptanceTests extends BaseAcceptanceTests {
                 .findOwners()
                 .returnsResults(10)
                 .with(1, "George Franklin", "110 W. Liberty St.",
-                        "Madison", "6085551023", "Leonardo")
+                        "Madison", "6085551023", "Leo")
                 .and(2, "Betty Davis", "638 Cardinal Ave.",
-                        "Sun Prairie", "6085551749", "Basil")
+                        "Sun Prairie", "6085551749", "Basilz")
                 .and(3, "Eduardo Rodriquez", "2693 Commerce St.",
                         "McFarland", "6085558763", "Rosy, Jewel")
                 .and(4, "Harold Davis", "563 Friendly St.",
@@ -58,7 +58,7 @@ public class PetclinicAcceptanceTests extends BaseAcceptanceTests {
                 .andCity("Madison")
                 .andTelephone("6085551023")
                 .pet(1)
-                .withName("Leonardo")
+                .withName("Leo")
                 .withBirthDate("2010-09-07")
                 .withType("cat");
     }
