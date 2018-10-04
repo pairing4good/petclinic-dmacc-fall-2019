@@ -3,7 +3,7 @@
 ## Running petclinic locally
 ```
 	git clone https://github.com/pairing4good/petclinic.git
-	cd spring-petclinic
+	cd petclinic
 	./gradlew bootRun
 ```
 
