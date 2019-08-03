@@ -33,9 +33,7 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile("com.h2database:h2")
-	compile('javassist:javassist:3.12.1.GA')
 	runtime('org.springframework.boot:spring-boot-devtools')
-	runtime('javax.xml.bind:jaxb-api:2.3.1')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 
     testCompile('org.apache.httpcomponents:httpclient:4.5.2')
