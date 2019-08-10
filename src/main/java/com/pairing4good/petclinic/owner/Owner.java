@@ -1,5 +1,6 @@
 package com.pairing4good.petclinic.owner;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.pairing4good.petclinic.model.BaseEntity;
 import com.pairing4good.petclinic.pet.Pet;
 
@@ -10,8 +11,10 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
+@JsonIgnoreProperties({ "pets" })
 public class Owner extends BaseEntity {
 
     @NotEmpty
