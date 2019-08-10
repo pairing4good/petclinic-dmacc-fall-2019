@@ -4,7 +4,7 @@
 ```
 	git clone https://github.com/pairing4good/petclinic.git
 	cd petclinic
-	./gradlew bootRun
+	./gradlew bootRun (Windows: gradlew bootRun)
 ```
 
 You can then access petclinic here: [http://localhost:8080/](http://localhost:8080/)
