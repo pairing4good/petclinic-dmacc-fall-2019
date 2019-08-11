@@ -14,7 +14,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -31,9 +34,12 @@ public class ClinicApiControllerIntegrationTests {
 
     @MockBean
     private OwnerRepository ownerRepository;
+    private List<Owner> owners;
 
     @Before
     public void setup() {
+        owners = new ArrayList<>();
+
         Owner firstOwner = new Owner();
         firstOwner.setId(1);
         firstOwner.setFirstName("FirstOne");
@@ -41,6 +47,8 @@ public class ClinicApiControllerIntegrationTests {
         firstOwner.setAddress("1 Address");
         firstOwner.setCity("CityOne");
         firstOwner.setTelephone("1111111111");
+
+        owners.add(firstOwner);
 
         Owner secondOwner = new Owner();
         secondOwner.setId(2);
@@ -50,11 +58,13 @@ public class ClinicApiControllerIntegrationTests {
         secondOwner.setCity("CityTwo");
         secondOwner.setTelephone("2222222222");
 
-        given(ownerRepository.findAll()).willReturn(Arrays.asList(firstOwner, secondOwner));
+        owners.add(secondOwner);
     }
 
     @Test
     public void shouldListOwnersAsJson() throws Exception {
+        given(ownerRepository.findAll()).willReturn(owners);
+
         mockMvc.perform(get("/api/owners"))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[" +
@@ -73,5 +83,13 @@ public class ClinicApiControllerIntegrationTests {
                         "\"telephone\":\"2222222222\"," +
                         "\"new\":false}" +
                         "]"));
+    }
+    @Test
+    public void shouldReturnEmptyList() throws Exception {
+        given(ownerRepository.findAll()).willReturn(Collections.EMPTY_LIST);
+
+        mockMvc.perform(get("/api/owners"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
     }
 }
