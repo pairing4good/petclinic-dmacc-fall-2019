@@ -17,7 +17,8 @@ public class PetclinicAcceptanceTests extends BaseAcceptanceTests {
     public void shouldShowWelcomePage() throws Exception {
         navigateToWelcome()
                 .withoutFlashMessage()
-                .withWelcomeMessage("Welcome");
+                .withWelcomeMessage("Welcome")
+                .withClinicName("Bob's Pet Clinic");
     }
 
     @Test
